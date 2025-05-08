@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriNexus GPT-4 챗봇</title>
+  <style>
+    body { font-family: sans-serif; background: #f9fafb; padding: 2rem; text-align: center; }
+    #chatBox { width: 100%; max-width: 600px; margin: 2rem auto; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1); text-align: left; }
+    .msg { margin: 0.5rem 0; }
+    .user { font-weight: bold; color: #0f766e; }
+    .bot { color: #333; }
+    input, button { padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #0f766e; color: white; border: none; }
+  </style>
+</head>
+<body>
+  <h1>🤖 AgriNexus GPT-4 챗봇</h1>
+  <div id="chatBox">
+    <div class="msg bot">GPT-4 챗봇에 무엇이든 물어보세요.</div>
+  </div>
+  <input type="text" id="question" placeholder="질문을 입력하세요" style="width:60%;" />
+  <button onclick="askGPT()">전송</button>
+
+  <script>
+    async function askGPT() {
+      const q = document.getElementById('question').value.trim();
+      if (!q) return;
+      const chatBox = document.getElementById('chatBox');
+      chatBox.innerHTML += `<div class='msg user'>🙋‍♂️ ${q}</div>`;
+      document.getElementById('question').value = '';
+
+      const res = await fetch('/.netlify/functions/chatgpt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q })
+      });
+
+      const data = await res.json();
+      chatBox.innerHTML += `<div class='msg bot'>🤖 ${data.answer}</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
